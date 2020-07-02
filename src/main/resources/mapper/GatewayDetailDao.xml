@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.ustc.sensor.dao.GatewayDetailDao">
+    <select id="queryGatewayDetail" resultType="team.ustc.sensor.entity.GatewayDetail">
+		SELECT * FROM gateways_detail
+		where gateway_id = #{gatewayId}
+	</select>
+<!--插入并返回ID-->
+    <insert id="insertGatewayDetail" parameterType="team.ustc.sensor.entity.GatewayDetail">
+        <!--			useGeneratedKeys="true" keyProperty="gatewayId" keyColumn="gateway_id">-->
+        INSERT INTO
+        gateways_detail(gateway_id,gateway_name,company_name,gateway_level,gateway_charge,
+        gateway_input,gateway_environment,gateway_description,gateway_other,between_proxy,
+        upload_proxy,username,update_time)
+        VALUES
+        (#{gatewayId},#{gatewayName},#{companyName},#{gatewayLevel},#{gatewayCharge},#{gatewayInput}
+        ,#{gatewayEnvironment},#{gatewayDescription},#{gatewayOther},#{betweenProxy}
+        ,#{uploadProxy},#{username},#{updateTime})
+        <selectKey resultType="int" order="AFTER" keyProperty="gatewayId">
+            SELECT max(gateway_id) from gateways_detail
+        </selectKey>
+    </insert>
+	<!--更新-->
+	<update id="updateGatewayDetail" parameterType="team.ustc.sensor.entity.GatewayDetail">
+        UPDATE gateways_detail
+        SET gateway_name=#{gatewayName},company_name=#{companyName},gateway_level=#{gatewayLevel},gateway_charge=#{gatewayCharge},
+        gateway_input=#{gatewayInput},gateway_environment=#{gatewayEnvironment},gateway_description=#{gatewayDescription},
+        gateway_other=#{gatewayOther},between_proxy=#{betweenProxy},upload_proxy=#{uploadProxy},update_time=#{updateTime}
+        WHERE gateway_id = #{gatewayId} AND username = #{username}
+    </update>
+
+    <select id="searchGatewayDetail" resultType="team.ustc.sensor.entity.GatewayDetail">
+		SELECT gateway_id FROM gateways_detail WHERE gateway_name LIKE '%${word}%'
+		UNION
+		(SELECT gateway_id FROM gateways_detail WHERE company_name LIKE '%${word}%')
+		UNION
+		(SELECT gateway_id FROM gateways_detail WHERE gateway_level LIKE '%${word}%')
+		UNION
+		(SELECT gateway_id FROM gateways_detail WHERE gateway_charge LIKE '%${word}%')
+		UNION
+		(SELECT gateway_id FROM gateways_detail WHERE gateway_input LIKE '%${word}%')
+		UNION
+		(SELECT gateway_id FROM gateways_detail WHERE gateway_environment LIKE '%${word}%')
+		UNION
+		(SELECT gateway_id FROM gateways_detail WHERE gateway_description LIKE '%${word}%')
+		UNION
+		(SELECT gateway_id FROM gateways_detail WHERE gateway_other LIKE '%${word}%')
+		UNION
+		(SELECT gateway_id FROM gateways_detail WHERE between_proxy LIKE '%${word}%')
+		UNION
+		(SELECT gateway_id FROM gateways_detail WHERE upload_proxy LIKE '%${word}%')
+	</select>
+    <!--    <select id="searchSensor" resultType="team.ustc.sensor.entity.SensorDetail">-->
+    <!--		SELECT sensor_id FROM sensors_detail WHERE sensor_name LIKE '%${word}%'-->
+    <!--		UNION-->
+    <!--		(SELECT sensor_id FROM sensors_detail WHERE company_name LIKE '%${word}%')-->
+    <!--	</select>-->
+    <!--    &lt;!&ndash;insert成功会返回一个名为ID的主键值，在数据库中为sensor_ID项&ndash;&gt;-->
+    <!--    <insert id="insertSensorDetail"  parameterType="team.ustc.sensor.entity.SensorDetail">-->
+    <!--		INSERT INTO-->
+    <!--		sensors_detail(sensor_id, sensor_name,sensor_type)-->
+    <!--		VALUES-->
+    <!--		(#{sensorId},#{sensorName},#{sensorType})-->
+    <!--	</insert>-->
+    <delete id="deleteGatewayDetail">
+        DELETE FROM gateways_detail
+    	WHERE gateway_id = #{gatewayId}
+    </delete>
+</mapper>

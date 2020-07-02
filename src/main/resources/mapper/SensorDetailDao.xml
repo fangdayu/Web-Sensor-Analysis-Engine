@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.ustc.sensor.dao.SensorDetailDao">
+    <select id="querySensorDetail" resultType="team.ustc.sensor.entity.SensorDetail">
+		SELECT * FROM sensors_detail
+		where sensor_id = #{sensorId}
+	</select>
+    <select id="searchSensor" resultType="team.ustc.sensor.entity.SensorDetail">
+		SELECT sensor_id FROM sensors_detail WHERE sensor_name LIKE '%${word}%'
+		UNION
+		(SELECT sensor_id FROM sensors_detail WHERE company_name LIKE '%${word}%')
+	</select>
+    <insert id="insertSensorDetail"  parameterType="team.ustc.sensor.entity.SensorDetail">
+		INSERT INTO
+		sensors_detail(sensor_id, sensor_name, company_name, sensor_type, sensor_type_detail, sensor_input, sensor_output, sensor_environment, sensor_range, sensor_level, sensor_application, sensor_description, sensor_strength, sensor_other, username,update_time)
+		VALUES
+		(#{sensorId},#{sensorName},#{companyName},#{sensorType},#{sensorTypeDetail},#{sensorInput},#{sensorOutput},#{sensorEnvironment},#{sensorRange},#{sensorLevel},#{sensorApplication},#{sensorDescription},#{sensorStrength},#{sensorOther},#{username},#{updateTime})
+	</insert>
+	<!--更新-->
+	<update id="updateSensorDetail" parameterType="team.ustc.sensor.entity.SensorDetail">
+        UPDATE sensors_detail
+        SET sensor_name=#{sensorName},sensor_type=#{sensorType},company_name=#{companyName},sensor_type_detail=#{sensorTypeDetail},sensor_input=#{sensorInput},
+        sensor_output=#{sensorOutput},sensor_environment=#{sensorEnvironment},sensor_range=#{sensorRange},sensor_level=#{sensorLevel},
+        sensor_application=#{sensorApplication},sensor_description=#{sensorDescription},sensor_strength=#{sensorStrength},sensor_other=#{sensorOther},update_time=#{updateTime}
+        WHERE sensor_id = #{sensorId} AND username = #{username}
+    </update>
+
+
+    <delete id="deleteSensorDetail">
+        DELETE FROM sensors_detail
+		WHERE sensor_id = #{sensorId}
+	</delete>
+</mapper>

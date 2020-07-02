@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.ustc.sensor.dao.SolutionDao">
+    <insert id="addSolution" useGeneratedKeys="true" keyProperty="solutionId"
+            keyColumn="solution_id" parameterType="team.ustc.sensor.entity.Solution">
+		INSERT INTO
+		solution(username,sensor_id,sensor_name,gateway_id,gateway_name,summary,note,update_time)
+		VALUES
+		(#{username},#{sensorId},#{sensorName},#{gatewayId},#{gatewayName},#{summary},#{note},#{updateTime})
+	</insert>
+    <select id="querySolutionBySensorId" resultType="team.ustc.sensor.entity.Solution">
+        SELECT * FROM solution
+        WHERE sensor_id = #{sensorId}
+        LIMIT 5
+    </select>
+    <select id="querySolutionByGatewayId" resultType="team.ustc.sensor.entity.Solution">
+        SELECT * FROM solution
+        WHERE gateway_id = #{gatewayId}
+        LIMIT 5
+    </select>
+    <select id="querySolutionByUsername" resultType="team.ustc.sensor.entity.Solution">
+        SELECT * FROM solution
+        WHERE username = #{username}
+        LIMIT 5
+    </select>
+    <select id="querySolutionPage" resultType="team.ustc.sensor.entity.Solution">
+        SELECT * FROM solution
+        WHERE 1
+        ORDER BY solution_id ASC
+        LIMIT #{pageStart},#{pageSize}
+    </select>
+    <select id="querySolutionBySolutionId" resultType="team.ustc.sensor.entity.Solution">
+        SELECT * FROM solution
+        WHERE solution_id = #{solutionId}
+    </select>
+
+</mapper>

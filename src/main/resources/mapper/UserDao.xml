@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 定义DAO层数据库操作(wang) -->
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.ustc.sensor.dao.UserDao">
+    <select id="searchUser" resultType="team.ustc.sensor.entity.User">
+        SELECT * FROM users
+        WHERE username LIKE '${word}%'
+    </select>
+<!--    根据用户名查询用户  -->
+    <select id="queryUser" resultType="team.ustc.sensor.entity.User">
+		SELECT *
+		FROM users
+        WHERE username = #{username}
+	</select>
+<!--    添加（注册）用户  -->
+    <insert id="addUser" parameterType="team.ustc.sensor.entity.User">
+		INSERT INTO
+		users(username, password,mobilePhone,email,description,update_time)
+        VALUES
+		(#{username},#{password},#{mobilePhone},#{email},#{description},#{updateTime})
+	</insert>
+
+    <update id="editBalance">
+		UPDATE users
+		SET balance = balance + #{price}
+		WHERE username = #{username}
+	</update>
+<!--    删除用户（管理员可操作）  -->
+    <delete id="deleteUser">
+        DELETE FROM users
+		WHERE username = #{username}
+	</delete>
+<!--    更新用户信息  -->
+    <update id="updateUser">
+        UPDATE users
+        SET
+        <if test="email != null">
+            email = #{email},
+        </if>
+        <if test="mobilePhone != null">
+            mobilePhone = #{mobilePhone},
+        </if>
+<!--        <if test="companyName != null">-->
+<!--			companyName = #{companyName},-->
+<!--        </if>-->
+        <if test="description != null">
+			description = #{description},
+        </if>
+        username = #{username}
+        WHERE username = #{username}
+    </update>
+<!--    更改用户密码  -->
+    <update id = "updateUserPassword">
+        UPDATE users
+        SET password = #{password},update_time = #{updateTime}
+        WHERE username = #{username}
+    </update>
+
+
+</mapper>

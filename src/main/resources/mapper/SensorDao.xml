@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 定义DAO层数据库操作(wang) -->
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.ustc.sensor.dao.SensorDao">
+    <select id="querySensorNum" resultType="int">
+		SELECT COUNT(*) FROM sensors
+	</select>
+	<select id="querySensor" resultType="team.ustc.sensor.entity.Sensor">
+		SELECT * FROM sensors
+		ORDER BY id ASC
+		LIMIT #{pageStart},#{pageSize}
+	</select>
+    <select id="querySensorById" resultType="team.ustc.sensor.entity.Sensor">
+		SELECT * FROM sensors
+		where id = #{id}
+	</select>
+    <!--insert成功会返回一个名为ID的主键值，在数据库中为sensor_ID项-->
+    <insert id="insertSensor" useGeneratedKeys="true" keyProperty="ID"
+            keyColumn="sensor_ID" parameterType="team.ustc.sensor.entity.Sensor">
+		INSERT INTO
+		sensors(id,type_name,company_name,company_username)
+		VALUES
+		(#{id},#{typeName},#{companyName},#{companyUsername})
+	</insert>
+    <update id="updateSensor" parameterType="team.ustc.sensor.entity.Sensor">/
+        update demo_sensor
+        <set>
+            <if test="sensor_name != null">sensor_name=#{sensor_name},</if>
+        </set>
+        where sensor_id=#{sensor_ID}
+    </update>
+    <delete id="deleteSensor">
+        DELETE FROM
+		demo_sensor
+		WHERE
+		sensor_id =
+		#{sensor_ID}
+	</delete>
+</mapper>

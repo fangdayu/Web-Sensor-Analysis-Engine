@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.ustc.sensor.dao.SensorViewDao">
+    <select id="searchSensor" resultType="team.ustc.sensor.entity.SensorView">
+        SELECT * FROM sensors_view
+        WHERE sensor_name LIKE '${word}%'
+    </select>
+    <select id="querySensorView" resultType="team.ustc.sensor.entity.SensorView">
+        SELECT * FROM sensors_view
+        WHERE sensor_id = #{sensorId}
+    </select>
+	<select id="querySensorViewByName" resultType="team.ustc.sensor.entity.SensorView">
+        SELECT * FROM sensors_view
+        WHERE sensor_name = #{sensorName}
+    </select>
+    <select id="querySensorNum" resultType="int">
+		SELECT COUNT(*) FROM sensors_view
+		WHERE 1
+		<if test="type!=null and type!=''">AND sensor_type = #{type}</if>
+        <if test="condition!=null and condition!=''">AND FIND_IN_SET(#{condition}, sensor_feature)</if>
+	</select>
+    <select id="querySensorPage" resultType="team.ustc.sensor.entity.SensorView">
+		SELECT * FROM sensors_view
+        WHERE 1
+        <if test="type!=null and type!=''">AND sensor_type = #{type}</if>
+        <if test="condition!=null and condition!=''">AND FIND_IN_SET(#{condition}, sensor_feature)</if>
+		ORDER BY sensor_id ASC
+		LIMIT #{pageStart},#{pageSize}
+	</select>
+    <!--insert成功会返回一个名为sensorId的主键值，在数据库中为sensor_id项-->
+    <insert id="insertSensorView" useGeneratedKeys="true" keyProperty="sensorId"
+            keyColumn="sensor_id" parameterType="team.ustc.sensor.entity.SensorView">
+		INSERT INTO
+		sensors_view(sensor_name,sensor_type,company_name,sensor_feature,output_type,output_max,output_min,temp_max,temp_min,username,update_time)
+		VALUES
+		(#{sensorName},#{sensorType},#{companyName},#{sensorFeature},#{outputType},#{outputMax},#{outputMin},#{tempMax},#{tempMin},#{username},#{updateTime})
+	</insert>
+    <update id="updateSensorView" useGeneratedKeys="true" keyProperty="sensorId"
+            keyColumn="sensor_id" parameterType="team.ustc.sensor.entity.SensorView">
+        UPDATE sensors_view
+        SET sensor_name=#{sensorName},sensor_type=#{sensorType},company_name=#{companyName},sensor_feature=#{sensorFeature},output_type=#{outputType},
+        output_max=#{outputMax},output_min=#{outputMin},temp_max=#{tempMax},temp_min=#{tempMin},update_time=#{updateTime}
+        WHERE sensor_id = #{sensorId} AND username = #{username}
+    </update>
+    <delete id="deleteSensorView">
+        DELETE FROM sensors_view
+		WHERE sensor_id = #{sensorId}
+	</delete>
+	<select id="querySensorViewByCompanyName" resultType="team.ustc.sensor.entity.SensorView">
+        SELECT * FROM sensors_view
+        WHERE company_name = #{companyName}
+        LIMIT 5
+    </select>
+    <select id="sensorMatchGateway" resultType="team.ustc.sensor.entity.GatewayView">
+        SELECT * FROM gateways_view
+        WHERE input_type = #{outputType}
+        AND ((temp_max &lt;= #{tempMax}
+        AND temp_min &gt;= #{tempMin})
+        OR (input_max &lt;= #{outputMax}
+        AND input_min &gt;= #{outputMin}))
+        LIMIT 5
+    </select>
+    <select id="sensorMatchAllGateway" resultType="team.ustc.sensor.entity.GatewayView">
+        SELECT * FROM gateways_view
+        WHERE input_type = #{outputType}
+        AND ((temp_max &lt;= #{tempMax}
+        AND temp_min &gt;= #{tempMin})
+        OR (input_max &lt;= #{outputMax}
+        AND input_min &gt;= #{outputMin}))
+        ORDER BY gateway_id ASC
+        LIMIT #{pageStart},#{pageSize}
+    </select>
+
+</mapper>

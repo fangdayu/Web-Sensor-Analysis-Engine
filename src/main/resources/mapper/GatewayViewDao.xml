@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="team.ustc.sensor.dao.GatewayViewDao">
+    <select id="searchGateway" resultType="team.ustc.sensor.entity.GatewayView">
+        SELECT * FROM gateways_view
+        WHERE gateway_name LIKE '${word}%'
+    </select>
+    <select id="queryGatewayView" resultType="team.ustc.sensor.entity.GatewayView">
+        SELECT * FROM gateways_view
+        WHERE gateway_id = #{gatewayId}
+    </select>
+	<select id="queryGatewayViewByName" resultType="team.ustc.sensor.entity.GatewayView">
+        SELECT * FROM gateways_view
+        WHERE gateway_name = #{gatewayName}
+    </select>
+    <select id="queryGatewayNum" resultType="int">
+		SELECT COUNT(*) FROM gateways_view
+		WHERE 1
+		<if test="type!=null and type!=''">AND gateway_type = #{type}</if>
+        <if test="condition!=null and condition!=''">AND FIND_IN_SET(#{condition}, gateway_feature)</if>
+	</select>
+    <select id="queryGatewayPage" resultType="team.ustc.sensor.entity.GatewayView">
+        SELECT * FROM gateways_view
+        WHERE 1
+        <if test="type!=null and type!=''">AND gateway_type = #{type}</if>
+        <if test="condition!=null and condition!=''">AND FIND_IN_SET(#{condition}, gateway_feature)</if>
+        ORDER BY gateway_id ASC
+        LIMIT #{pageStart},#{pageSize}
+    </select>
+    <!--insert成功会返回一个名为gatewayId的主键值，在数据库中为gateway_id项-->
+    <insert id="insertGatewayView" useGeneratedKeys="true" keyProperty="gatewayId"
+            keyColumn="gateway_id" parameterType="team.ustc.sensor.entity.GatewayView">
+		INSERT INTO
+		gateways_view(gateway_name,company_name,gateway_feature,input_type,input_max,input_min,temp_max,temp_min,username,update_time)
+		VALUES
+		(#{gatewayName},#{companyName},#{gatewayFeature},#{inputType},#{inputMax},#{inputMin},#{tempMax},#{tempMin},#{username},#{updateTime})
+	</insert>
+    <update id="updateGatewayView" useGeneratedKeys="true" keyProperty="gatewayId"
+            keyColumn="gateway_id" parameterType="team.ustc.sensor.entity.GatewayView">
+        UPDATE gateways_view
+        SET gateway_name=#{gatewayName},company_name=#{companyName},gateway_feature=#{gatewayFeature},input_type=#{inputType},
+        input_max=#{inputMax},input_min=#{inputMin},temp_max=#{tempMax},temp_min=#{tempMin},update_time=#{updateTime}
+        WHERE gateway_id = #{gatewayId} AND username = #{username}
+    </update>
+    <delete id="deleteGatewayView">
+        DELETE FROM gateways_view
+		WHERE gateway_id = #{gatewayId}
+	</delete>
+	<select id="queryGatewayViewByCompanyName" resultType="team.ustc.sensor.entity.GatewayView">
+        SELECT * FROM gateways_view
+        WHERE company_name = #{companyName}
+        LIMIT 5
+    </select>
+    <select id="gatewayMatchSensor" resultType="team.ustc.sensor.entity.SensorView">
+        SELECT * FROM sensors_view
+        WHERE output_type = #{inputType}
+        AND ((temp_max &lt;= #{tempMax}
+        AND temp_min &gt;= #{tempMin})
+        OR (output_max &lt;= #{inputMax}
+        AND output_min &gt;= #{inputMin}))
+        LIMIT 5
+    </select>
+    <select id="gatewayMatchAllSensor" resultType="team.ustc.sensor.entity.SensorView">
+        SELECT * FROM sensors_view
+        WHERE output_type = #{inputType}
+        AND ((temp_max &lt;= #{tempMax}
+        AND temp_min &gt;= #{tempMin})
+        OR (output_max &lt;= #{inputMax}
+        AND output_min &gt;= #{inputMin}))
+        ORDER BY sensor_id ASC
+        LIMIT #{pageStart},#{pageSize}
+    </select>
+</mapper>
